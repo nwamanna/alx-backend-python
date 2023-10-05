@@ -7,4 +7,3 @@
 def add(a: float, b: float) -> float:
     """ returns sum of float"""
     return a + b
-
