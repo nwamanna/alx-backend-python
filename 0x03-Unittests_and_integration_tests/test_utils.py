@@ -59,11 +59,11 @@ class TestMemoize(unittest.TestCase):
     def test_memoize(self):
         class TestClass:
 
-            def a_method(self) -> int:
+            def a_method(self):
                 return 42
 
             @memoize
-            def a_property(self) -> int:
+            def a_property(self) -> Callable:
                 return self.a_method()
 
         with patch.object(TestClass, 'a_method',
@@ -71,8 +71,8 @@ class TestMemoize(unittest.TestCase):
             ins = TestClass()
 
             # call method
-            val_1 = ins.a_method()
-            val_2 = ins.a_method()
+            val_1 = ins.a_property
+            val_2 = ins.a_property
 
             # verify that the method was called only once
             mock_method.assert_called_once()
