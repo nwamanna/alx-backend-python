@@ -2,9 +2,11 @@
 """ a TestAccessNestedMap class that inherits from
     unittest.TestCase.
 """
+import requests
 import unittest
+from unittest.mock import patch, Mock
 from parameterized import parameterized
-from utils import access_nested_map
+import utils
 from typing import Mapping, Sequence
 
 
@@ -18,7 +20,7 @@ class TestAccessNestedMap(unittest.TestCase):
                             ({"a": {"b": 2}}, ("a", "b"),  2)
     ])
     def test_access_nested_map(self, a: Mapping, b: Sequence, expected: int):
-        result = access_nested_map(a, b)
+        result = utils.access_nested_map(a, b)
         self.assertEqual(result, expected)
 
 
@@ -29,4 +31,24 @@ class TestAccessNestedMap(unittest.TestCase):
     def test_access_nested_map_exception(self, a: Mapping, b: Sequence, expected: type = KeyError):
         """ to test that a KeyError is raised for the following inputs """
         with self.assertRaises(expected):
-            access_nested_map(a, b)
+            utils.access_nested_map(a, b)
+
+    @parameterized.expand([
+                            ("http://example.com", {"payload": True}),
+                            ("http://holberton.io", {"payload": False}),
+    ])
+    @patch('requests.get')
+    def test_get_json(self, url, expected, mock_request):
+        #create a mock response
+        mock_response = Mock()
+        mock_response.json.return_value = expected
+
+        #configure the patched requests to return the Mock value
+        mock_request.return_value = mock_response
+
+        response = utils.get_json(url)
+
+        #test
+        requests.get.assert_called_once_with(url)
+        self.assertEqual(response, expected)
+
