@@ -8,7 +8,7 @@ from unittest.mock import patch, Mock
 from parameterized import parameterized
 import utils
 from utils import memoize
-from typing import Mapping, Sequence
+from typing import Mapping, Sequence, Callable, Dict
 
 
 class TestAccessNestedMap(unittest.TestCase):
@@ -39,7 +39,7 @@ class TestAccessNestedMap(unittest.TestCase):
                             ("http://holberton.io", {"payload": False}),
     ])
     @patch('requests.get')
-    def test_get_json(self, url, expected, mock_request):
+    def test_get_json(self, url: str, expected: Dict, mock_request: Callable):
         # create a mock response
         mock_response = Mock()
         mock_response.json.return_value = expected
@@ -59,7 +59,7 @@ class TestMemoize(unittest.TestCase):
     def test_memoize(self):
         class TestClass:
 
-            def a_method(self):
+            def a_method(self) -> int:
                 return 42
 
             @memoize
