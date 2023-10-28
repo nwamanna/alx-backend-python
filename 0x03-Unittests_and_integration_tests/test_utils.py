@@ -24,12 +24,12 @@ class TestAccessNestedMap(unittest.TestCase):
         result = utils.access_nested_map(a, b)
         self.assertEqual(result, expected)
 
-
     @parameterized.expand([
                             ({}, ("a",), KeyError),
                             ({"a": 1}, ("a", "b"), KeyError),
     ])
-    def test_access_nested_map_exception(self, a: Mapping, b: Sequence, expected: type = KeyError):
+    def test_access_nested_map_exception(self, a: Mapping, b: Sequence,
+                                         expected: type = KeyError):
         """ to test that a KeyError is raised for the following inputs """
         with self.assertRaises(expected):
             utils.access_nested_map(a, b)
@@ -40,16 +40,16 @@ class TestAccessNestedMap(unittest.TestCase):
     ])
     @patch('requests.get')
     def test_get_json(self, url, expected, mock_request):
-        #create a mock response
+        # create a mock response
         mock_response = Mock()
         mock_response.json.return_value = expected
 
-        #configure the patched requests to return the Mock value
+        # configure the patched requests to return the Mock value
         mock_request.return_value = mock_response
 
         response = utils.get_json(url)
 
-        #test
+        # test
         requests.get.assert_called_once_with(url)
         self.assertEqual(response, expected)
 
@@ -66,8 +66,8 @@ class TestMemoize(unittest.TestCase):
             def a_property(self) -> int:
                 return self.a_method()
 
-
-        with patch.object(TestClass, 'a_method', return_value=42) as mock_method:
+        with patch.object(TestClass, 'a_method',
+                          return_value=42) as mock_method:
             ins = TestClass()
 
             # call method
@@ -77,7 +77,6 @@ class TestMemoize(unittest.TestCase):
             # verify that the method was called only once
             mock_method.assert_called_once()
 
-            #verify results are the same
+            # verify results are the same
             self.assertEqual(val_1, 42)
             self.assertEqual(val_2, 42)
-        
