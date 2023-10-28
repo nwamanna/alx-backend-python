@@ -7,6 +7,7 @@ import unittest
 from unittest.mock import patch, Mock
 from parameterized import parameterized
 import utils
+from utils import memoize
 from typing import Mapping, Sequence
 
 
@@ -52,3 +53,31 @@ class TestAccessNestedMap(unittest.TestCase):
         requests.get.assert_called_once_with(url)
         self.assertEqual(response, expected)
 
+
+class TestMemoize(unittest.TestCase):
+    """ class with a test_memoize method """
+    def test_memoize(self):
+        class TestClass:
+
+            def a_method(self) -> int:
+                return 42
+
+            @memoize
+            def a_property(self) -> int:
+                return self.a_method()
+
+
+        with patch.object(TestClass, 'a_method', return_value=42) as mock_method:
+            ins = TestClass()
+
+            # call method
+            val_1 = ins.a_method()
+            val_2 = ins.a_method()
+
+            # verify that the method was called only once
+            mock_method.assert_called_once()
+
+            #verify results are the same
+            self.assertEqual(val_1, 42)
+            self.assertEqual(val_2, 42)
+        
